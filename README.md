@@ -26,35 +26,6 @@ No necesitas experiencia previa con inteligencia artificial: basta con conocimie
 | 6 | Contratos con Pydantic | Convertir un texto del Super 99 en datos listos para la base de datos, y tu reto: `calcular_itbms_panama` |
 | 7 | Producción en Telegram | Tu agente funcionando en tu celular |
 
-## Arquitectura
-
-```
-   TU CELULAR            TU CÓDIGO (el notebook)                     SERVICIOS EXTERNOS
-  ┌──────────┐      ┌───────────────────────────────────┐
-  │ Telegram │ ---> │ Bot (pyTelegramBotAPI)            │
-  │          │ <--- │   |                               │   "¿qué hago?"    ┌──────────────────┐
-  └──────────┘      │   v                               │ ----------------> │ Gemini 3.5 Flash │
-                    │ Agente (Automatic Function        │ <---------------- │   (el cerebro)   │
-                    │         Calling)                  │   function_call   └──────────────────┘
-                    │   |                               │
-                    │   v                               │
-                    │ Herramientas Python (las manos)   │
-                    │   ├── SQLite ........ tu billetera │
-                    │   ├── yfinance ...... precios ----┼-----------------> Yahoo Finance
-                    │   ├── simulador ..... cálculo exacto
-                    │   └── Pydantic ...... contratos de datos
-                    └───────────────────────────────────┘
-```
-
-| Pieza | Tecnología | Para qué sirve |
-|---|---|---|
-| El cerebro | Gemini 3.5 Flash, con la librería `google-genai` | Entiende lo que pide el usuario y decide qué herramienta usar |
-| Las manos | Funciones de Python con *Automatic Function Calling* | Hacen el trabajo exacto: consultar, guardar y calcular |
-| La memoria | El historial del chat y SQLite | Recordar la conversación (corto plazo) y los movimientos (largo plazo) |
-| Las ventanas | `yfinance` | Traer precios reales de acciones y criptomonedas |
-| Los formularios | Pydantic con `response_schema` | Garantizar que los datos lleguen con la forma correcta |
-| La interfaz | Telegram, con `pyTelegramBotAPI` | Usar el agente desde el celular |
-
 ## Requisitos
 
 - Una **cuenta personal de Gmail**. Las cuentas institucionales pueden tener el acceso bloqueado, y Google exige ser mayor de 18 años para usar la API de Gemini.
@@ -77,22 +48,6 @@ El notebook instala todo lo necesario en su primera celda:
 ```
 
 > Si te pierdes o Colab se reinicia, haz clic en la celda donde va la clase y usa **Entorno de ejecución > Ejecutar anteriores** (`Ctrl + F8`).
-
-## Agenda (120 minutos)
-
-| Hora | Bloque |
-|:-:|---|
-| 3:15 | Bienvenida |
-| 3:19 | Teoría: de la era del chatbot a la era de los agentes, qué es un LLM, el agente por dentro, tool calling y automatización |
-| 3:48 | Demostración del resultado final |
-| 3:51 | Parte 1 · Setup: Colab, API Key y Secrets |
-| 4:01 | Parte 2 · Por qué un LLM solo no basta |
-| 4:08 | Parte 3 · Tu primera herramienta: Tool Calling |
-| 4:21 | Parte 4 · Memoria persistente con SQLite |
-| 4:34 | Parte 5 · Conexión al mundo real: Yahoo Finance |
-| 4:45 | Parte 6 · Contratos con Pydantic y reto ITBMS |
-| 4:57 | Parte 7 · Producción: tu agente en Telegram |
-| 5:10 | Cierre y próximos pasos |
 
 ## Las herramientas del agente
 
@@ -127,23 +82,6 @@ Cada herramienta es una función normal de Python. Gemini no ve su código: solo
 - En la **capa gratuita** de Gemini, Google puede usar tus prompts para mejorar sus productos. Practica con datos de ejemplo y no escribas números de cuenta ni contraseñas reales.
 - El token de Telegram es la contraseña de tu bot. Si se filtra, envía `/revoke` a @BotFather para generar uno nuevo.
 - **Limitación conocida:** el bot tiene una sola billetera para todas las personas que le escriben. Para un bot personal funciona bien; para atender a varias personas por separado hay que agregar un `user_id` a la tabla y filtrar por él en cada herramienta. Es el primer reto propuesto después del taller.
-
-## Problemas frecuentes
-
-| Síntoma o error | Solución |
-|---|---|
-| `SecretNotFoundError` | Crea el secreto con el nombre exacto: `GOOGLE_API_KEY` o `TELEGRAM_TOKEN` |
-| `NotebookAccessError` | Activa *Notebook access* en el panel Secrets y vuelve a ejecutar la celda |
-| `400 API key not valid` | Copia de nuevo la clave desde AI Studio, sin espacios |
-| `403 PERMISSION_DENIED` | Usa una cuenta personal de Gmail |
-| `404 NOT_FOUND` (modelo) | Cambia `MODELO` a `"gemini-3.5-flash-lite"` |
-| `429 RESOURCE_EXHAUSTED` | Agotaste la cuota: espera 60 segundos |
-| `NameError` | Te saltaste una celda: usa **Ejecutar anteriores** (`Ctrl + F8`) |
-| Precio con "RESPALDO OFFLINE" | Yahoo Finance limitó la red; el agente sigue funcionando con precios de referencia |
-| Telegram `401 Unauthorized` | Copia de nuevo el token desde @BotFather |
-| Telegram `409 Conflict` | El bot está corriendo en dos lugares a la vez: deja una sola celda corriendo |
-
-El notebook incluye una tabla más completa en su **Anexo**.
 
 ## Notas técnicas
 
