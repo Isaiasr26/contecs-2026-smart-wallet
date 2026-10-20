@@ -1,0 +1,15 @@
+# Secretos
+.env
+
+# Datos locales de la billetera
+*.db
+*.db-journal
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
